@@ -76,7 +76,7 @@ class Invipay_Ipcpaygate_PaymentController extends Mage_Core_Controller_Front_Ac
 		$request->setStatusUrl(Mage::getUrl('ipcpaygate/payment/status', array()));
 		$request->setStatusDataFormat(CallbackDataFormat::JSON);
 		$request->setDocumentNumber($data['increment_id']);
-		$request->setIssueDate(strtotime($data['created_at']) * 1000);
+		$request->setIssueDate(date('Y-m-d', strtotime($data['created_at'])));
 		$request->setPriceGross($data['grand_total']);
 		$request->setCurrency($data['base_currency_code']);
 		$request->setIsInvoice(false);
