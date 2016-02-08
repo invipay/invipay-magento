@@ -23,4 +23,14 @@ class Invipay_Ipcpaygate_Block_Form_Checkout extends Mage_Payment_Block_Form
 		$this->setMethodTitle('');
 		$this->setMethodLabelAfterHtml($label->toHtml());
 	}
+
+	public function getBaseDueDate()
+	{
+		return $this->getMethod()->getConfigData('invipay_base_duedate');
+	}
+
+	public function getTotalDueDate()
+	{
+		return $this->getMethod()->getConfigData('invipay_base_duedate') + 7;
+	}
 }
