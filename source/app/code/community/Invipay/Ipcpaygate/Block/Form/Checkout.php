@@ -9,7 +9,13 @@ class Invipay_Ipcpaygate_Block_Form_CheckoutLabel extends Mage_Core_Block_Templa
 
 	public function getLabelTitle()
 	{
-		return Mage::getStoreConfig('payment/ipcpaygate/title');
+		$output = Mage::getStoreConfig('payment/ipcpaygate/title');
+
+		$exploded = explode('(', $output, 2);
+
+		$output = $exploded[0] . (count($exploded) > 1 ? '(' . str_replace(' ', '&nbsp;', $exploded[1]) : '');
+
+		return $output;
 	}
 }
 
