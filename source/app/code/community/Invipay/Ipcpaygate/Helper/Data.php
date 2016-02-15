@@ -69,11 +69,13 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getNipFromQuote($quote)
 	{
 		$addressNip = null;
-		$quoteNip = $quote->getData()['customer_taxvat'];
+		$quoteNip = $quote->getData();
+		$quoteNip = $quoteNip['customer_taxvat'];
 		$billingAddress = $quote->getBillingAddress();
 
 		if ($billingAddress !== null) {
-			$addressNip = $billingAddress->getData()['vat_id'];
+			$addressNip = $billingAddress->getData();
+			$addressNip = $addressNip['vat_id'];
 		}
 
 		$output = !empty($addressNip) ? $addressNip : $quoteNip;
@@ -83,11 +85,13 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getNipFromOrder($order)
 	{
 		$addressNip = null;
-		$orderNip = $order->getData()['customer_taxvat'];
+		$orderNip = $order->getData();
+		$orderNip = $orderNip['customer_taxvat'];
 		$billingAddress = $order->getBillingAddress();
 
 		if ($billingAddress !== null) {
-			$addressNip = trim($billingAddress->getData()['vat_id']);
+			$addressNip = $billingAddress->getData();
+			$addressNip = trim($addressNip['vat_id']);
 		}
 
 		$output = !empty($addressNip) ? $addressNip : $orderNip;;
@@ -99,7 +103,14 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 	public function getOrderPaymentStatusById($orderId)
 	{
 		$order = Mage::getModel('sales/order')->load($orderId);
-		return $order !== null ? $order->getData()['invipay_status'] : null;
+		
+		if ($order !== null)
+		{
+			$order = $order->getData();
+			return $order['invipay_status'];
+		}
+
+		return null;
 	}
 
 	public function confirmDeliveryAndSendInvoice($order)
@@ -120,9 +131,9 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 		$pdfData = $pdf->render();
 
 		$documentNumber = join(', ', $invoiceNumbers);
-		$issueDate = strtotime($order->getCreatedAt());
+		$issueDate = strtotime($order->getCreatedAt()) * 1000;
 		$dueDateDays = intval(Mage::getStoreConfig('payment/ipcpaygate/invipay_base_duedate'));
-		$dueDate = $issueDate + ($dueDateDays * 60 * 60 * 24);
+		$dueDate = $issueDate + ($dueDateDays * 60 * 60 * 24 * 1000);
 
 		$client = $this->getApiClient();
 
@@ -133,8 +144,8 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 		{
 			$conversionData = new OrderToInvoiceData();
 			$conversionData->setInvoiceDocumentNumber($documentNumber);
-			$conversionData->setIssueDate(date('Y-m-d', $issueDate));
-			$conversionData->setDueDate(date('Y-m-d', $dueDate));
+			$conversionData->setIssueDate($issueDate);
+			$conversionData->setDueDate($dueDate);
 
 			$request->setConversionData($conversionData);
 		}
