@@ -131,9 +131,9 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 		$pdfData = $pdf->render();
 
 		$documentNumber = join(', ', $invoiceNumbers);
-		$issueDate = strtotime($order->getCreatedAt()) * 1000;
+		$issueDate = strtotime($order->getCreatedAt());
 		$dueDateDays = intval(Mage::getStoreConfig('payment/ipcpaygate/invipay_base_duedate'));
-		$dueDate = $issueDate + ($dueDateDays * 60 * 60 * 24 * 1000);
+		$dueDate = $issueDate + ($dueDateDays * 60 * 60 * 24);
 
 		$client = $this->getApiClient();
 
@@ -144,8 +144,8 @@ class Invipay_Ipcpaygate_Helper_Data extends Mage_Core_Helper_Abstract
 		{
 			$conversionData = new OrderToInvoiceData();
 			$conversionData->setInvoiceDocumentNumber($documentNumber);
-			$conversionData->setIssueDate($issueDate);
-			$conversionData->setDueDate($dueDate);
+			$conversionData->setIssueDate(date('Y-m-d', $issueDate));
+			$conversionData->setDueDate(date('Y-m-d', $dueDate));
 
 			$request->setConversionData($conversionData);
 		}
