@@ -1,0 +1,3 @@
+[submodule "app/code/community/Invipay/Common/Apiclient"]
+	path = app/code/community/Invipay/Common/Apiclient
+	url = https://github.com/invipay/invipay-php-api.git
